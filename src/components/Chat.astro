@@ -1,0 +1,36 @@
+---
+import Button from "../components/Button.astro";
+import Groq from "groq-sdk";
+const groq = new Groq({
+  apiKey: "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",
+  dangerouslyAllowBrowser: true,
+});
+async function chat() {
+  const chatCompletion = await getGroqChatCompletion();
+  console.log(chatCompletion.choices[0]?.message?.content || "");
+  const output = chatCompletion.choices[0]?.message?.content || "";
+  return output;
+}
+
+async function getGroqChatCompletion() {
+  return groq.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content:
+          "you are named Luna. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, and neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
+      },
+      {
+        role: "user",
+        content: "Hi, what's your name?",
+      },
+    ],
+    model: "llama3-70b-8192",
+  });
+}
+---
+
+<Button id="trigger-button">Click me!</Button>
+<div id="chat-output" class="p-4 mt-4 border border-gray-300 rounded">
+  {chat}
+</div>
