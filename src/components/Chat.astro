@@ -16,12 +16,13 @@ import Button from "../components/Button.astro";
 
 <script>
   import Groq from "groq-sdk";
+  import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.d.ts";
 
   const key = "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";
   const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
 
   // Initialize chat history with the system prompt
-  let chatHistory = [
+  let chatHistory: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content:
@@ -65,9 +66,9 @@ import Button from "../components/Button.astro";
   const history = document.getElementById("history");
 
   // event listener to send user's message to api
-  button.addEventListener("click", async () => {
-    const user = document.getElementById("user").value;
-    if (box) box.textContent = await handleUserMessage(user);
+  button!.addEventListener("click", async () => {
+    const user = (document.getElementById("user") as HTMLInputElement).value;
+    box!.textContent = await handleUserMessage(user);
 
     // not sure if i want to display all the chat history yet, but history is working now
     /* for (let i = 0; i < chatHistory.length; i++) {
