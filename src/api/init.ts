@@ -1,5 +1,3 @@
----
-import Button from "../components/Button.astro";
 import Groq from "groq-sdk";
 
 // the fetch
@@ -31,26 +29,5 @@ async function chat(m: string) {
   const output = chatCompletion.choices[0]?.message?.content || "";
   return output;
 }
----
 
-<div class="flex flex-col gap-8">
-  <div id="chat-output" class="p-4 mt-4 border border-gray-100 rounded">
-    {chat("hello!")}
-  </div>
-
-  <div class="flex gap-8">
-    <input id="user" type="text" class="border border-gray-300 rounded" />
-    <Button id="submit-button">Confetti!</Button>
-  </div>
-</div>
-
-<script>
-  const buttons = document.querySelectorAll(".submit-button");
-  const box = document.getElementById("chat-output");
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const user = (document.getElementById("user") as HTMLInputElement).value;
-      if (box) box.textContent = user;
-    });
-  });
-</script>
+const resp = chat("hi");
