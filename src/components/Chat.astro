@@ -1,9 +1,11 @@
 ---
 import Button from "../components/Button.astro";
+// TODO: need to fix in production but its giving me grief...
 //const { key = import.meta.env.GROQ_API_KEY } = Astro.props;
 ---
 
 <div class="flex flex-col gap-8">
+  <div id="history" class="p-4 mt-4 border border-gray-100 rounded"></div>
   <div id="chat-output" class="p-4 mt-4 border border-gray-100 rounded"></div>
 
   <div class="flex gap-8">
@@ -14,41 +16,63 @@ import Button from "../components/Button.astro";
 
 <script>
   import Groq from "groq-sdk";
-  // the fetch
-  const key = "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";
 
+  const key = "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";
   const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
 
-  async function getGroqChatCompletion(m: string) {
-    return groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content:
-            "you are named Luna. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, and neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
-        },
-        {
-          role: "user",
-          content: m,
-        },
-      ],
-      model: "llama3-70b-8192",
-    });
+  // Initialize chat history with the system prompt
+  let chatHistory = [
+    {
+      role: "system",
+      content:
+        "you are named Luna. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, and neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
+    },
+  ];
+
+  // Function to get chat completion from Groq API
+  async function getGroqChatCompletion() {
+    try {
+      return await groq.chat.completions.create({
+        messages: chatHistory,
+        model: "llama3-70b-8192",
+        temperature: 0.6,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      return {
+        choices: [{ message: { content: "Sorry, something went wrong." } }],
+      };
+    }
   }
 
-  // await the response + parse results
-  async function chat(m: string) {
-    const chatCompletion = await getGroqChatCompletion(m);
-    console.log(chatCompletion.choices[0]?.message?.content || "");
-    const output = chatCompletion.choices[0]?.message?.content || "";
-    return output;
+  // Function to handle sending user message and receiving response
+  export async function handleUserMessage(userInput) {
+    chatHistory.push({ role: "user", content: userInput });
+    const chatCompletion = await getGroqChatCompletion();
+    // extract luna's message
+    const assistantMessage =
+      chatCompletion.choices[0]?.message?.content || "No response";
+    chatHistory.push({ role: "assistant", content: assistantMessage });
+
+    return assistantMessage;
   }
+
+  // Export chatHistory for potential use in other modules
+  //export { chatHistory };
 
   const button = document.getElementById("submit-button");
   const box = document.getElementById("chat-output");
+  const history = document.getElementById("history");
 
+  // event listener to send user's message to api
   button.addEventListener("click", async () => {
     const user = document.getElementById("user").value;
-    if (box) box.textContent = await chat(user); // await the result of chat()
+    if (box) box.textContent = await handleUserMessage(user);
+
+    // not sure if i want to display all the chat history yet, but history is working now
+    /* for (let i = 0; i < chatHistory.length; i++) {
+      const conversation = chatHistory[i].content;
+      if (history) history.textContent += conversation;
+    } */
   });
 </script>
