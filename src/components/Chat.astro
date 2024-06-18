@@ -1,6 +1,6 @@
 ---
 import Button from "../components/Button.astro";
-// TODO: need to fix in production but its giving me grief...
+// TODO: need to fix in production but it's giving me grief...
 //const { key = import.meta.env.GROQ_API_KEY } = Astro.props;
 ---
 
@@ -16,7 +16,7 @@ import Button from "../components/Button.astro";
 
 <script>
   import Groq from "groq-sdk";
-  import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.d.ts";
+  import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
   const key = "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";
   const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
@@ -29,6 +29,7 @@ import Button from "../components/Button.astro";
         "you are named Luna. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, and neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
     },
   ];
+  //export { chatHistory };
 
   // Function to get chat completion from Groq API
   async function getGroqChatCompletion() {
@@ -58,19 +59,14 @@ import Button from "../components/Button.astro";
     return assistantMessage;
   }
 
-  // Export chatHistory for potential use in other modules
-  //export { chatHistory };
-
   const button = document.getElementById("submit-button");
   const box = document.getElementById("chat-output");
   const history = document.getElementById("history");
 
-  // event listener to send user's message to api
+  // Event listener to send user's message to api
   button!.addEventListener("click", async () => {
     const user = (document.getElementById("user") as HTMLInputElement).value;
     box!.textContent = await handleUserMessage(user);
-
-    // not sure if i want to display all the chat history yet, but history is working now
     /* for (let i = 0; i < chatHistory.length; i++) {
       const conversation = chatHistory[i].content;
       if (history) history.textContent += conversation;
