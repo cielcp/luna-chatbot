@@ -1,7 +1,6 @@
 ---
+export const prerender = false;
 import Button from "../components/Button.astro";
-// TODO: need to fix in production but it's giving me grief...
-//const { key = import.meta.env.GROQ_API_KEY } = Astro.props;
 ---
 
 <div class="flex flex-col gap-8">
@@ -15,30 +14,31 @@ import Button from "../components/Button.astro";
 </div>
 
 <script>
-  import Groq from "groq-sdk";
-  import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
-
-  const key = "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";
-  const groq = new Groq({ apiKey: key, dangerouslyAllowBrowser: true });
-
   // Initialize chat history with the system prompt
-  let chatHistory: ChatCompletionMessageParam[] = [
+  let chatHistory = [
     {
       role: "system",
       content:
         "you are named Luna. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, and neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
     },
   ];
-  //export { chatHistory };
 
-  // Function to get chat completion from Groq API
-  async function getGroqChatCompletion() {
+  // Function to get chat completion from the server-side endpoint
+  async function getChatCompletion() {
     try {
-      return await groq.chat.completions.create({
-        messages: chatHistory,
-        model: "llama3-70b-8192",
-        temperature: 0.6,
+      const response = await fetch("/endpoint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ chatHistory }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return await response.json();
     } catch (error) {
       console.error("Error:", error);
       return {
@@ -48,10 +48,9 @@ import Button from "../components/Button.astro";
   }
 
   // Function to handle sending user message and receiving response
-  export async function handleUserMessage(userInput) {
+  async function handleUserMessage(userInput) {
     chatHistory.push({ role: "user", content: userInput });
-    const chatCompletion = await getGroqChatCompletion();
-    // extract luna's message
+    const chatCompletion = await getChatCompletion();
     const assistantMessage =
       chatCompletion.choices[0]?.message?.content || "No response";
     chatHistory.push({ role: "assistant", content: assistantMessage });
@@ -59,17 +58,12 @@ import Button from "../components/Button.astro";
     return assistantMessage;
   }
 
-  const button = document.getElementById("submit-button");
-  const box = document.getElementById("chat-output");
-  const history = document.getElementById("history");
-
-  // Event listener to send user's message to api
-  button!.addEventListener("click", async () => {
-    const user = (document.getElementById("user") as HTMLInputElement).value;
-    box!.textContent = await handleUserMessage(user);
-    /* for (let i = 0; i < chatHistory.length; i++) {
-      const conversation = chatHistory[i].content;
-      if (history) history.textContent += conversation;
-    } */
-  });
+  document
+    .getElementById("submit-button")
+    .addEventListener("click", async () => {
+      const user = (document.getElementById("user") as HTMLInputElement).value;
+      const message = await handleUserMessage(user);
+      document.getElementById("chat-output").textContent = message;
+      //document.getElementById("history").textContent = chatHistory.map((msg) => msg.content).join("\n");
+    });
 </script>
