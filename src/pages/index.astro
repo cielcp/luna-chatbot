@@ -1,6 +1,6 @@
 ---
 // Component Imports
-import Button from "../components/Button.astro";
+import Luna from "../components/Luna.astro";
 import Chat from "../components/Chat.astro";
 
 // Full Astro Component Syntax:
@@ -11,14 +11,20 @@ import Chat from "../components/Chat.astro";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
     <title>Luna</title>
   </head>
 
   <body>
-    <div class="grid place-items-center h-screen content-center">
+    <nav class="flex items-center p-8 gap-2">
+      <h1 class="text-xl">LUNA</h1>
+      <img src="logo.png" class="h-8" />
+    </nav>
+    <main class="flex flex-col justify-center w-screen h-screen items-center">
+      <Luna />
       <Chat />
-    </div>
+    </main>
   </body>
 </html>
