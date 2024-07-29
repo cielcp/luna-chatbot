@@ -106,10 +106,11 @@ export const prerender = false;
   }
 
   async function enterMessage() {
-    const user = (document.getElementById("user") as HTMLInputElement).value;
+    const user = document.getElementById("user") as HTMLInputElement;
     if (user) {
+      const message = user.value;
       document.getElementById("user").value = "";
-      await handleUserMessage(user);
+      await handleUserMessage(message);
     }
     displayMessages();
   }
