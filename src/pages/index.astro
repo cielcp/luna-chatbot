@@ -12,17 +12,21 @@ import Chat from "../components/Chat.astro";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="stylesheet" href="/src/styles/main.css" />
     <title>Luna</title>
   </head>
 
   <body class="flex flex-col h-screen w-screen">
-    <nav class="flex items-center p-8 gap-2">
+    <nav class="flex items-center px-8 gap-2 h-16">
       <h1 class="text-xl">LUNA</h1>
       <img src="logo.png" class="h-8" />
     </nav>
-    <main class="flex flex-grow items-center justify-center">
+    <main
+      class="flex flex-grow items-center justify-center h-[calc(100vh-04rem)]">
       <div id="left" class="w-1/2 h-full flex justify-center items-center">
         <Luna />
       </div>
