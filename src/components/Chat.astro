@@ -1,12 +1,36 @@
 ---
 export const prerender = false;
-import Input from "../components/Input.astro";
 ---
 
-<div class="flex flex-col gap-8 w-1/3">
-  <!-- <div id="history" class="p-4 mt-4 border border-gray-100 rounded"></div> -->
-  <div id="chat-output" class=""></div>
-  <Input />
+<div class="flex flex-col gap-8 h-full w-full px-24">
+  <div id="history" class="flex flex-col"></div>
+  <div id="chat-output" class="h-1/2 flex items-end"></div>
+  <div
+    id="message-form"
+    class="flex mt-auto border border-black rounded-full mb-12">
+    <input
+      id="user"
+      type="text"
+      name="userInput"
+      class="bg-transparent w-full px-3 py-2 rounded-full sm:text-sm focus:"
+      placeholder="Message Luna"
+    />
+    <button
+      id="submit-button"
+      class="bg-black text-white rounded-full m-2"
+      type="submit">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M11 20V7.825L5.4 13.425L4 12L12 4L20 12L18.6 13.425L13 7.825V20H11Z"
+          fill="currentColor"></path>
+      </svg>
+    </button>
+  </div>
 </div>
 
 <script>
@@ -53,17 +77,47 @@ import Input from "../components/Input.astro";
     return assistantMessage;
   }
 
+  // Function to display messaging history
+  function displayMessages() {
+    const historyDiv = document.getElementById("history");
+    historyDiv.innerHTML = ""; // Clear previous messages
+    for (let i = 1; i < chatHistory.length; i++) {
+      const msg = chatHistory[i];
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add(
+        "p-2",
+        "px-4",
+        "rounded-3xl",
+        "max-w-xs",
+        "mb-2"
+      );
+      if (msg.role === "user") {
+        messageDiv.classList.add(
+          "border",
+          "border-black",
+          "self-end",
+          "text-black"
+        );
+      } else if (msg.role === "assistant") {
+        messageDiv.classList.add("bg-black", "self-start", "text-off-white");
+      }
+      messageDiv.textContent = msg.content;
+      historyDiv.appendChild(messageDiv);
+    }
+  }
+
   async function enterMessage() {
     const user = (document.getElementById("user") as HTMLInputElement).value;
     document.getElementById("user").value = "";
     const message = await handleUserMessage(user);
-    document.getElementById("chat-output").textContent = message;
+    displayMessages();
+    //document.getElementById("chat-output").textContent = message;
     //document.getElementById("history").textContent = chatHistory.map((msg) => msg.content).join("\n");
   }
 
   document
     .getElementById("submit-button")
-    .addEventListener("click", enterMessage());
+    .addEventListener("click", enterMessage);
 
   document.getElementById("user").addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
