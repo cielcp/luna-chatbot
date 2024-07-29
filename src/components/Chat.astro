@@ -107,11 +107,11 @@ export const prerender = false;
 
   async function enterMessage() {
     const user = (document.getElementById("user") as HTMLInputElement).value;
-    document.getElementById("user").value = "";
-    const message = await handleUserMessage(user);
+    if (user) {
+      document.getElementById("user").value = "";
+      await handleUserMessage(user);
+    }
     displayMessages();
-    //document.getElementById("chat-output").textContent = message;
-    //document.getElementById("history").textContent = chatHistory.map((msg) => msg.content).join("\n");
   }
 
   document
