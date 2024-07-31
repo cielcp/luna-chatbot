@@ -1,7 +1,19 @@
 ---
-// The luna animations go here
+export const prerender = false;
 ---
 
-<div class="border w-96 h-96 flex justify-center items-center mb-8">
-  * Insert animations here *
-</div>
+<canvas id="canvas" width="1000" height="1000"></canvas>
+<button id="happy">happy</button>
+
+<script>
+  import * as rive from "@rive-app/canvas";
+  const r = new rive.Rive({
+    //src: "https://cdn.rive.app/animations/vehicles.riv",
+    // OR the path to a discoverable and public Rive asset
+    src: "/luna.riv",
+    canvas: document.getElementById("canvas") as HTMLCanvasElement,
+    autoplay: true,
+    stateMachines: "State Machine 1",
+    onLoad: () => {},
+  });
+</script>
