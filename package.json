@@ -15,6 +15,7 @@
     "@astrojs/netlify": "^5.4.0",
     "@astrojs/react": "^3.5.0",
     "@astrojs/tailwind": "^5.1.0",
+    "@rive-app/canvas": "^2.19.6",
     "@types/canvas-confetti": "^1.6.4",
     "astro": "^4.10.2",
     "autoprefixer": "^10.4.19",
