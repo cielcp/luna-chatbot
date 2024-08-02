@@ -1,6 +1,5 @@
 ---
 // Component Imports
-import Luna from "../components/Luna.astro";
 import Chat from "../components/Chat.astro";
 
 // Full Astro Component Syntax:
@@ -26,12 +25,7 @@ import Chat from "../components/Chat.astro";
     </nav>
     <main
       class="flex flex-grow items-center justify-center h-[calc(100vh-04rem)]">
-      <div id="left" class="w-1/2 h-full flex justify-center items-center">
-        <Luna />
-      </div>
-      <div id="right" class="w-1/2 h-full flex justify-center items-center">
-        <Chat />
-      </div>
+      <Chat />
     </main>
   </body>
 </html>

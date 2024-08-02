@@ -2,45 +2,51 @@
 export const prerender = false;
 ---
 
-<div class="flex flex-col gap-8 h-full w-full px-24">
-  <div id="history" class="flex flex-col overflow-y-auto"></div>
-  <div
-    id="message-form"
-    class="flex mt-auto border border-black rounded-full mb-12">
-    <label for="user-input" class="sr-only">Message Luna</label>
-    <input
-      id="user-input"
-      type="text"
-      name="userInput"
-      class="bg-transparent w-full px-3 py-2 rounded-full sm:text-sm focus:"
-      placeholder="Message Luna"
-    />
-    <button
-      id="submit-button"
-      class="bg-black text-white rounded-full m-2"
-      type="submit">
-      <span class="sr-only">Submit</span>
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M11 20V7.825L5.4 13.425L4 12L12 4L20 12L18.6 13.425L13 7.825V20H11Z"
-          fill="currentColor"></path>
-      </svg>
-    </button>
+<div id="left" class="w-1/2 h-full flex justify-center items-center">
+  <canvas id="canvas" width="1000" height="1000"></canvas>
+</div>
+<div id="right" class="w-1/2 h-full flex justify-center items-center">
+  <div class="flex flex-col gap-8 h-full w-full px-24">
+    <button id="happy" class="border">happy</button>
+    <p id="emotion"></p>
+    <div id="history" class="flex flex-col overflow-y-auto"></div>
+    <div
+      id="message-form"
+      class="flex mt-auto border border-black rounded-full mb-12">
+      <label for="user-input" class="sr-only">Message Luna</label>
+      <input
+        id="user-input"
+        type="text"
+        name="userInput"
+        class="bg-transparent w-full px-3 py-2 rounded-full sm:text-sm focus:"
+        placeholder="Message Luna"
+      />
+      <button
+        id="submit-button"
+        class="bg-black text-white rounded-full m-2"
+        type="submit">
+        <span class="sr-only">Submit</span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M11 20V7.825L5.4 13.425L4 12L12 4L20 12L18.6 13.425L13 7.825V20H11Z"
+            fill="currentColor"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 
+<!-- Chatbot Script -->
 <script>
-  // Global vars
-  const userInput = document.getElementById("user-input");
-  const submitButton = document.getElementById("submit-button");
+  import * as rive from "@rive-app/canvas";
 
-  // Initialize chat history with the system prompt
+  // Initialize chat history
   let chatHistory = [
     {
       role: "system",
@@ -49,7 +55,7 @@ export const prerender = false;
     },
   ];
 
-  // Function to get chat completion from the server-side endpoint
+  // Function to get AI response from the server-side endpoint
   async function getChatCompletion() {
     try {
       const response = await fetch("/endpoint", {
@@ -73,6 +79,42 @@ export const prerender = false;
     }
   }
 
+  // The Rive animation
+  const luna = new rive.Rive({
+    src: "/luna.riv",
+    canvas: document.getElementById("canvas") as HTMLCanvasElement,
+    autoplay: true,
+    stateMachines: "State Machine 1",
+    onLoad: () => {
+      updateAnimation();
+    },
+  });
+
+  // Function to update the animation based on the current emotion
+  function updateAnimation() {
+    console.log("updating...");
+    const emotionElement = document.getElementById("emotion");
+    if (emotionElement && emotionElement.textContent) {
+      console.log("updated!");
+      const emotion = emotionElement.textContent;
+      const inputs = luna.stateMachineInputs("State Machine 1");
+      const animation = inputs.find((i) => i.name === emotion);
+      if (animation) {
+        animation.fire();
+      }
+    }
+  }
+
+  // Set up a MutationObserver to detect changes to the emotion element
+  const emotionElement = document.getElementById("emotion");
+  if (emotionElement) {
+    const observer = new MutationObserver(() => {
+      updateAnimation();
+    });
+
+    observer.observe(emotionElement, { childList: true, characterData: true });
+  }
+
   // Function to handle sending user message and receiving response
   async function handleUserMessage(userInput) {
     chatHistory.push({ role: "user", content: userInput });
@@ -86,7 +128,7 @@ export const prerender = false;
   // Function to display messaging history
   function displayMessages() {
     const historyDiv = document.getElementById("history");
-    historyDiv.innerHTML = ""; // Clear previous messages
+    historyDiv.innerHTML = ""; // Clear previous messages?
     for (let i = 1; i < chatHistory.length; i++) {
       const msg = chatHistory[i];
       const messageDiv = document.createElement("div");
@@ -97,6 +139,19 @@ export const prerender = false;
         "max-w-xs",
         "mb-2"
       );
+
+      let content = msg.content;
+      const emotionMatch = content.match(/^\((.*?)\)/);
+
+      if (emotionMatch) {
+        const emotion = emotionMatch[1];
+        msg.content = content.replace(/^\(.*?\)\s*/, ""); // Remove the emotion part from the message
+        const emotionElement = document.getElementById("emotion");
+        if (emotionElement) {
+          emotionElement.textContent = emotion; // Display emotion
+        }
+      }
+
       if (msg.role === "user") {
         messageDiv.classList.add(
           "border",
@@ -111,6 +166,10 @@ export const prerender = false;
       historyDiv.appendChild(messageDiv);
     }
   }
+
+  // Sending messages functionality
+  const userInput = document.getElementById("user-input");
+  const submitButton = document.getElementById("submit-button");
 
   async function enterMessage() {
     const user = userInput as HTMLInputElement;
@@ -127,6 +186,14 @@ export const prerender = false;
   userInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       enterMessage();
+    }
+  });
+
+  userInput.addEventListener("click", function (event) {
+    console.log("typing");
+    const emotionElement = document.getElementById("emotion");
+    if (emotionElement) {
+      emotionElement.textContent = "resting";
     }
   });
 </script>
