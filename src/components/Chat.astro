@@ -7,7 +7,7 @@ export const prerender = false;
 </div>
 <div id="right" class="w-1/2 h-full flex justify-center items-center">
   <div class="flex flex-col gap-8 h-full w-full px-24">
-    <button id="happy" class="border">happy</button>
+    <!-- Will hide later -->
     <p id="emotion"></p>
     <div id="history" class="flex flex-col overflow-y-auto"></div>
     <div
@@ -95,8 +95,8 @@ export const prerender = false;
     console.log("updating...");
     const emotionElement = document.getElementById("emotion");
     if (emotionElement && emotionElement.textContent) {
-      console.log("updated!");
-      const emotion = emotionElement.textContent;
+      const emotion = emotionElement.textContent.toLowerCase();
+      console.log("updated to ", emotion);
       const inputs = luna.stateMachineInputs("State Machine 1");
       const animation = inputs.find((i) => i.name === emotion);
       if (animation) {
@@ -193,7 +193,7 @@ export const prerender = false;
     console.log("typing");
     const emotionElement = document.getElementById("emotion");
     if (emotionElement) {
-      emotionElement.textContent = "resting";
+      emotionElement.textContent = "neutral";
     }
   });
 </script>
