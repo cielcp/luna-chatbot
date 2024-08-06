@@ -18,13 +18,14 @@ import Chat from "../components/Chat.astro";
     <title>Luna</title>
   </head>
 
-  <body class="flex flex-col h-screen w-screen bg-off-white font-satoshi">
-    <nav class="flex items-center px-8 gap-2 h-16">
+  <body
+    class="flex flex-col h-screen w-screen bg-off-white font-satoshi xl:px-24">
+    <nav class="flex items-center px-8 md:px-24 gap-2 h-16">
       <h1 class="text-xl">LUNA</h1>
       <img src="logo.png" class="h-8" />
     </nav>
     <main
-      class="flex flex-grow items-center justify-center h-[calc(100vh-04rem)]">
+      class="flex flex-grow flex-col lg:flex-row items-center justify-center h-[calc(100vh-04rem)]">
       <Chat />
     </main>
   </body>
