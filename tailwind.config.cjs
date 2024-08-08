@@ -13,6 +13,7 @@ module.exports = {
         "light-gray": "#6F6F6F",
         "medium-gray": "#454545",
         "dark-gray": "#555555",
+        "luna-purple": "#C4BBFB",
       },
     },
   },
