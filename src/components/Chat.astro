@@ -24,7 +24,7 @@ export const prerender = false;
         id="user-input"
         type="text"
         name="userInput"
-        class="bg-transparent placeholder-dark-gray dark:placeholder-off-white w-full px-4 py-2 rounded-full sm:text-sm focus:outline-none"
+        class="bg-transparent placeholder-gray-800 dark:placeholder-off-white w-full px-4 py-2 rounded-full sm:text-sm focus:outline-none"
         autocomplete="off"
         placeholder="Message Luna"
       />
@@ -38,6 +38,7 @@ export const prerender = false;
           height="40"
           viewBox="0 0 24 24"
           fill="none"
+          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
@@ -189,7 +190,7 @@ export const prerender = false;
         "dark:bg-off-white",
         "self-start",
         "text-off-white",
-        "dark:text-dark-gray"
+        "dark:text-gray-800"
       );
     }
     messageDiv.textContent = content;

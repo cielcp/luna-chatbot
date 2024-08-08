@@ -9,10 +9,14 @@ module.exports = {
       },
       colors: {
         "off-white": "#F3F3F3",
-        "light-blue": "#D0E1EB",
-        "light-gray": "#6F6F6F",
-        "medium-gray": "#454545",
-        "dark-gray": "#555555",
+        blue: {
+          100: "#D0E1EB",
+        },
+        gray: {
+          100: "#6F6F6F",
+          500: "#454545",
+          800: "#555555",
+        },
         "luna-purple": "#C4BBFB",
       },
       animation: {
