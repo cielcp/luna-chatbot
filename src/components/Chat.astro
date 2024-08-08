@@ -73,10 +73,28 @@ export const prerender = false;
     const emotionElement = document.getElementById("emotion");
     if (emotionElement && emotionElement.textContent) {
       const emotion = emotionElement.textContent.toLowerCase();
-      console.log("updated to ", emotion);
+      console.log("updated to", emotion);
+      const emotionList = [
+        "happiness",
+        "sadness",
+        "excitement",
+        "sympathy",
+        "anger",
+        "fear",
+      ];
+      let animationName = "neutral";
+      // if emotion is one in the possible set, fire it
+      if (emotion in emotionList) {
+        console.log("in list!");
+        animationName = emotion;
+      }
+      // else fire neutral
       const inputs = luna.stateMachineInputs("Animation State Machine");
       const animation = inputs.find((i) => i.name === emotion);
       if (animation) {
+        animation.fire();
+      } else {
+        const animation = inputs.find((i) => i.name === "neutral");
         animation.fire();
       }
     }
@@ -118,7 +136,7 @@ export const prerender = false;
     {
       role: "system",
       content:
-        "you are a virtual support companion named Luna. if needed, use cognitive behavioral therapy techniques. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, or neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
+        "you are a virtual support companion named Luna. you are cool. if needed, use cognitive behavioral therapy techniques. out of the following list: anger, sympathy, fear, happiness, sadness, or excitement, pick the emotion that best fits your own response and put it in parenthesis at the beginning",
     },
   ];
 
