@@ -15,6 +15,19 @@ module.exports = {
         "dark-gray": "#555555",
         "luna-purple": "#C4BBFB",
       },
+      animation: {
+        "fade-out": "fadeOut 1s forwards",
+      },
+      keyframes: {
+        fadeOut: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
     },
   },
   plugins: [],
