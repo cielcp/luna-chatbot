@@ -1,11 +1,7 @@
 ---
-// Component Imports
 import Nav from "../components/Nav.astro";
 import Modal from "../components/Modal.astro";
 import Chat from "../components/Chat.astro";
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
 ---
 
 <html lang="en">
@@ -27,7 +23,6 @@ import Chat from "../components/Chat.astro";
       id="intro-animation"
       class="fixed inset-0 flex items-center justify-center bg-off-white dark:bg-dark-gray z-50">
       <div class="animate-spin">
-        <!--<img src="/logo-icon.png" />-->
         <svg
           class="w-16 h-16"
           viewBox="0 0 32 32"
@@ -53,16 +48,14 @@ import Chat from "../components/Chat.astro";
     </div>
 
     <script>
-      // Intro animation
+      // Intro animation stuff
       document.addEventListener("DOMContentLoaded", () => {
         const introAnimation = document.getElementById("intro-animation");
-        const mainContent = document.getElementById("main-content");
 
         setTimeout(() => {
           introAnimation.classList.add("animate-fade-out");
           introAnimation.addEventListener("animationend", () => {
             introAnimation.remove();
-            mainContent.classList.add("animate-fade-in");
           });
         }, 500);
       });
@@ -78,7 +71,7 @@ import Chat from "../components/Chat.astro";
         modal.classList.add("hidden");
       }
 
-      // Toggle
+      // Toggle stuff
       const toggle = document.getElementById("toggle") as HTMLInputElement;
       if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark");

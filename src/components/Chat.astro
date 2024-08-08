@@ -2,16 +2,18 @@
 export const prerender = false;
 ---
 
+<!-- Animation half -->
 <div
   id="left"
   class="w-full lg:w-1/2 h-1/2 lg:h-full flex justify-center items-center overflow-hidden">
   <canvas id="canvas" width="730" height="730"></canvas>
 </div>
+
+<!-- Messaging half -->
 <div
   id="right"
   class="w-full lg:w-1/2 h-1/2 lg:h-full flex justify-center items-center">
   <div class="flex flex-col gap-8 h-full w-full py-4 lg:pt-0 lg:pb-8">
-    <!-- Will hide later -->
     <p id="emotion" class="hidden"></p>
     <div id="history" class="flex flex-col overflow-y-auto"></div>
     <div
@@ -48,16 +50,74 @@ export const prerender = false;
   </div>
 </div>
 
-<!-- Chatbot Script -->
 <script>
   import * as rive from "@rive-app/canvas";
 
-  // Initialize chat history
+  // -------- Rive stuff --------
+
+  // The canvas animation object
+  const luna = new rive.Rive({
+    src: "/luna.riv",
+    canvas: document.getElementById("canvas") as HTMLCanvasElement,
+    autoplay: true,
+    stateMachines: "Animation State Machine",
+    onLoad: () => {
+      updateAnimation();
+    },
+  });
+
+  // Function to update the animation based on the current emotion
+  function updateAnimation() {
+    console.log("updating...");
+    const emotionElement = document.getElementById("emotion");
+    if (emotionElement && emotionElement.textContent) {
+      const emotion = emotionElement.textContent.toLowerCase();
+      console.log("updated to ", emotion);
+      const inputs = luna.stateMachineInputs("Animation State Machine");
+      const animation = inputs.find((i) => i.name === emotion);
+      if (animation) {
+        animation.fire();
+      }
+    }
+  }
+
+  // Mutation observer to detect changes to the emotion element
+  const emotionElement = document.getElementById("emotion");
+  if (emotionElement) {
+    const observer = new MutationObserver(() => {
+      updateAnimation();
+    });
+
+    observer.observe(emotionElement, { childList: true, characterData: true });
+  }
+
+  // Event listeners for listening mode
+  const userInput = document.getElementById("user-input");
+
+  userInput.addEventListener("click", function (event) {
+    console.log("typing");
+    const emotionElement = document.getElementById("emotion");
+    if (emotionElement) {
+      emotionElement.textContent = "listening";
+    }
+  });
+
+  userInput.addEventListener("input", function (event) {
+    console.log("typing");
+    const emotionElement = document.getElementById("emotion");
+    if (emotionElement) {
+      emotionElement.textContent = "listening";
+    }
+  });
+
+  // -------- AI stuff --------
+
+  // Initialize chat history object
   let chatHistory = [
     {
       role: "system",
       content:
-        "you are a virtual support companion named Luna. if needed, use cognitive behavioral therapy techniques. out of the following list: anger, sympathy,  fear, happiness, sadness, excitement, or neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
+        "you are a virtual support companion named Luna. if needed, use cognitive behavioral therapy techniques. out of the following list: anger, sympathy, fear, happiness, sadness, excitement, or neutral, pick the emotion that best fits your own response and put it in parenthesis at the beginning of your response",
     },
   ];
 
@@ -85,41 +145,7 @@ export const prerender = false;
     }
   }
 
-  // The Rive animation
-  const luna = new rive.Rive({
-    src: "/luna.riv",
-    canvas: document.getElementById("canvas") as HTMLCanvasElement,
-    autoplay: true,
-    stateMachines: "Animation State Machine",
-    onLoad: () => {
-      updateAnimation();
-    },
-  });
-
-  // Function to update the animation based on the current emotion
-  function updateAnimation() {
-    console.log("updating...");
-    const emotionElement = document.getElementById("emotion");
-    if (emotionElement && emotionElement.textContent) {
-      const emotion = emotionElement.textContent.toLowerCase();
-      console.log("updated to ", emotion);
-      const inputs = luna.stateMachineInputs("Animation State Machine");
-      const animation = inputs.find((i) => i.name === emotion);
-      if (animation) {
-        animation.fire();
-      }
-    }
-  }
-
-  // Set up a MutationObserver to detect changes to the emotion element
-  const emotionElement = document.getElementById("emotion");
-  if (emotionElement) {
-    const observer = new MutationObserver(() => {
-      updateAnimation();
-    });
-
-    observer.observe(emotionElement, { childList: true, characterData: true });
-  }
+  // -------- Messaging stuff --------
 
   // Function to handle sending user message and receiving response
   async function handleUserMessage(userInput) {
@@ -131,69 +157,47 @@ export const prerender = false;
     return assistantMessage;
   }
 
-  // Function to display messaging history
-  function displayMessages() {
+  // Function to display a message bubble
+  function displayBubble(role, content) {
     const historyDiv = document.getElementById("history");
-    historyDiv.innerHTML = ""; // Clear previous messages?
-    for (let i = 1; i < chatHistory.length; i++) {
-      const msg = chatHistory[i];
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add(
-        "p-2",
-        "px-4",
-        "rounded-3xl",
-        "max-w-xs",
-        "mb-2"
-      );
-
-      let content = msg.content;
-      const emotionMatch = content.match(/^\((.*?)\)/);
-      if (emotionMatch) {
-        const emotion = emotionMatch[1];
-        msg.content = content.replace(/^\(.*?\)\s*/, ""); // Remove the emotion part from the message
-        // if the emotion is in the list
-        /* const possibleEmotions = [
-          "anger",
-          "happiness",
-          "sympathy",
-          "fear",
-          "sadness",
-          "excitement",
-          "neutral",
-        ]; */
-        const emotionElement = document.getElementById("emotion");
-        if (emotionElement) {
-          emotionElement.textContent = emotion; // Display emotion
-        }
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("p-2", "px-4", "rounded-3xl", "max-w-xs", "mb-2");
+    const emotionMatch = content.match(/^\((.*?)\)/);
+    if (emotionMatch) {
+      const emotion = emotionMatch[1];
+      content = content.replace(/^\(.*?\)\s*/, ""); // Remove the emotion part from the message
+      // Check if the emotion is in the list?
+      const emotionElement = document.getElementById("emotion");
+      if (emotionElement) {
+        emotionElement.textContent = emotion; // Display emotion
       }
-
-      if (msg.role === "user") {
-        messageDiv.classList.add(
-          "border",
-          "border-black",
-          "dark:border-off-white",
-          "border-2",
-          "self-end",
-          "text-black",
-          "dark:text-off-white"
-        );
-      } else if (msg.role === "assistant") {
-        messageDiv.classList.add(
-          "bg-black",
-          "dark:bg-off-white",
-          "self-start",
-          "text-off-white",
-          "dark:text-dark-gray"
-        );
-      }
-      messageDiv.textContent = msg.content;
-      historyDiv.appendChild(messageDiv);
     }
+
+    if (role === "user") {
+      messageDiv.classList.add(
+        "border",
+        "border-black",
+        "dark:border-off-white",
+        "border-2",
+        "self-end",
+        "text-black",
+        "dark:text-off-white"
+      );
+    } else if (role === "assistant") {
+      messageDiv.classList.add(
+        "bg-black",
+        "dark:bg-off-white",
+        "self-start",
+        "text-off-white",
+        "dark:text-dark-gray"
+      );
+    }
+    messageDiv.textContent = content;
+    historyDiv.appendChild(messageDiv);
     historyDiv.scrollTop = historyDiv.scrollHeight;
   }
 
-  // Sending messages functionality
-  const userInput = document.getElementById("user-input");
+  // Functionality for sending messages
   const submitButton = document.getElementById("submit-button");
 
   async function enterMessage() {
@@ -201,9 +205,11 @@ export const prerender = false;
     if (user && user.value) {
       const message = user.value;
       user.value = "";
+      displayBubble("user", message);
       await handleUserMessage(message);
+      const response = chatHistory[chatHistory.length - 1];
+      displayBubble("assistant", response.content);
     }
-    displayMessages();
   }
 
   submitButton.addEventListener("click", enterMessage);
@@ -211,22 +217,6 @@ export const prerender = false;
   userInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       enterMessage();
-    }
-  });
-
-  userInput.addEventListener("click", function (event) {
-    console.log("typing");
-    const emotionElement = document.getElementById("emotion");
-    if (emotionElement) {
-      emotionElement.textContent = "listening";
-    }
-  });
-
-  userInput.addEventListener("input", function (event) {
-    console.log("typing");
-    const emotionElement = document.getElementById("emotion");
-    if (emotionElement) {
-      emotionElement.textContent = "listening";
     }
   });
 </script>
