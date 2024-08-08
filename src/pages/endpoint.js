@@ -10,7 +10,6 @@ async function getGroqChatCompletion(chatHistory, apiKey) {
     return await groq.chat.completions.create({
       messages: chatHistory,
       model: "llama3-70b-8192",
-      temperature: 0.5,
     });
   } catch (error) {
     console.error("Error:", error);
