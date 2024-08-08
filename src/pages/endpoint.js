@@ -1,7 +1,6 @@
 import Groq from "groq-sdk";
-//import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
-export const prerender = false; // Ensure this endpoint is server-rendered on demand
+export const prerender = false; // For Astro's on demand server rendering
 
 async function getGroqChatCompletion(chatHistory, apiKey) {
   const groq = new Groq({ apiKey });
