@@ -14,10 +14,14 @@ module.exports = {
         },
         gray: {
           100: "#6F6F6F",
+          200: "#C7C7C7",
           500: "#454545",
           800: "#555555",
         },
-        "luna-purple": "#C4BBFB",
+        purple: {
+          100: "#C4BBFB",
+          200: "#949DBB",
+        },
       },
       animation: {
         "fade-out": "fadeOut 1s forwards",
