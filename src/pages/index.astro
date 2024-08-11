@@ -17,7 +17,7 @@ import Chat from "../components/Chat.astro";
   </head>
 
   <body
-    class="flex flex-col h-screen w-screen bg-gradient-to-b from-gray-200 dark:from-gray-100 to-purple-200 dark:to-gray-500 text-gray-800 dark:text-off-white font-inter font-medium px-2 sm:px-6 xl:px-24">
+    class="dark flex flex-col h-svh w-screen bg-gradient-to-b from-gray-200 dark:from-gray-100 to-purple-200 dark:to-gray-500 text-black dark:text-off-white font-inter font-medium px-2 sm:px-6 xl:px-24">
     <!-- Page load animation -->
     <div
       id="intro-animation"
@@ -71,12 +71,24 @@ import Chat from "../components/Chat.astro";
         modal.classList.add("hidden");
       }
 
-      // Toggle stuff
+      // Dark mode toggle stuff
       const toggle = document.getElementById("toggle") as HTMLInputElement;
-      if (localStorage.getItem("theme") === "dark") {
+
+      // Apply default dark mode if no preference is set
+
+      // Set the theme based on localStorage or default to dark
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "dark" || !storedTheme) {
         document.body.classList.add("dark");
         toggle.checked = true;
+        localStorage.setItem("theme", "dark");
+        if (toggle) toggle.checked = true;
+      } else {
+        document.body.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+        if (toggle) toggle.checked = false;
       }
+
       toggle.addEventListener("change", () => {
         if (toggle.checked) {
           document.body.classList.add("dark");
