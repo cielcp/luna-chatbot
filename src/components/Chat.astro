@@ -18,13 +18,13 @@ export const prerender = false;
     <div id="history" class="flex flex-col overflow-y-auto"></div>
     <div
       id="message-form"
-      class="flex mt-auto border border-gray-800 dark:border-off-white border-2 rounded-full focus-within:outline focus-within:outline-2 focus-within:outline-purple-100">
+      class="flex mt-auto border border-black dark:border-off-white border-2 rounded-full focus-within:outline focus-within:outline-2 focus-within:outline-purple-100">
       <label for="user-input" class="sr-only">Message Luna</label>
       <input
         id="user-input"
         type="text"
         name="userInput"
-        class="bg-transparent placeholder-gray-800 dark:placeholder-off-white w-full px-4 py-2 rounded-full sm:text-sm focus:outline-none"
+        class="bg-transparent placeholder-black dark:placeholder-off-white w-full px-4 py-2 rounded-full sm:text-sm focus:outline-none"
         autocomplete="off"
         placeholder="Message Luna"
       />
@@ -159,7 +159,14 @@ export const prerender = false;
     } catch (error) {
       console.error("Error:", error);
       return {
-        choices: [{ message: { content: "Sorry, something went wrong." } }],
+        choices: [
+          {
+            message: {
+              content:
+                "Sorry, too many requests this month. Let me know if you're seeing this message so I can upgrade the API key! - Ciel",
+            },
+          },
+        ],
       };
     }
   }
@@ -195,16 +202,16 @@ export const prerender = false;
     if (role === "user") {
       messageDiv.classList.add(
         "border",
-        "border-gray-800",
+        "border-black",
         "dark:border-off-white",
         "border-2",
         "self-end",
-        "text-gray-800",
+        "text-black",
         "dark:text-off-white"
       );
     } else if (role === "assistant") {
       messageDiv.classList.add(
-        "bg-gray-800",
+        "bg-black",
         "dark:bg-off-white",
         "self-start",
         "text-off-white",
