@@ -189,21 +189,24 @@ export const prerender = false;
   }
 
   // Function to display a message bubble
-  function displayBubble(role, content) {
+  async function displayBubble(role, content) {
     const historyDiv = document.getElementById("history");
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("p-2", "px-4", "rounded-3xl", "max-w-xs", "mb-2");
+
+    // Handle emotion matching
+    let emotion = null;
     const emotionMatch = content.match(/^\((.*?)\)/);
     if (emotionMatch) {
-      const emotion = emotionMatch[1];
-      content = content.replace(/^\(.*?\)\s*/, ""); // Remove the emotion part from the message
-      // Check if the emotion is in the list?
+      emotion = emotionMatch[1];
+      content = content.replace(/^\(.*?\)\s*/, "");
       const emotionElement = document.getElementById("emotion");
       if (emotionElement) {
-        emotionElement.textContent = emotion; // Display emotion
+        emotionElement.textContent = emotion;
       }
     }
 
+    // Add styling based on role
     if (role === "user") {
       messageDiv.classList.add(
         "border",
@@ -214,6 +217,7 @@ export const prerender = false;
         "text-black",
         "dark:text-off-white"
       );
+      messageDiv.textContent = content;
     } else if (role === "assistant") {
       messageDiv.classList.add(
         "bg-black",
@@ -222,10 +226,55 @@ export const prerender = false;
         "text-off-white",
         "dark:text-gray-800"
       );
+      // For assistant messages, start empty
+      messageDiv.textContent = "";
     }
-    messageDiv.textContent = content;
+
     historyDiv.appendChild(messageDiv);
-    historyDiv.scrollTop = historyDiv.scrollHeight;
+
+    // Function to smoothly scroll to the bottom
+    const scrollToBottom = () => {
+      const target = historyDiv.scrollHeight - historyDiv.clientHeight;
+      historyDiv.scrollTo({
+        top: target,
+        behavior: "smooth",
+      });
+    };
+    scrollToBottom();
+
+    // If it's an assistant message, animate the typing
+    if (role === "assistant") {
+      const typingSpeed = 30;
+      let currentIndex = 0;
+
+      // Cursor element
+      const cursor = document.createElement("span");
+      cursor.classList.add("animate-pulse");
+      cursor.textContent = "▋";
+      messageDiv.appendChild(cursor);
+
+      // Type out each character
+      while (currentIndex < content.length) {
+        await new Promise((resolve) => setTimeout(resolve, typingSpeed));
+        messageDiv.textContent = content.slice(0, currentIndex + 1);
+        messageDiv.appendChild(cursor);
+        currentIndex++;
+
+        // Scroll after each character if we're near the bottom
+        const isNearBottom =
+          historyDiv.scrollHeight -
+            historyDiv.scrollTop -
+            historyDiv.clientHeight <
+          100;
+        if (isNearBottom) {
+          scrollToBottom();
+        }
+      }
+
+      // Remove cursor after typing is complete
+      cursor.remove();
+      scrollToBottom();
+    }
   }
 
   // Functionality for sending messages
