@@ -141,7 +141,7 @@ export const prerender = false;
     {
       role: "system",
       content:
-        "you are a virtual support companion named Luna. you are cool. if needed, use cognitive behavioral therapy techniques. out of the following list: anger, sympathy, fear, happiness, sadness, or excitement, pick the emotion that best fits your own response and put it in parenthesis at the beginning",
+        "You are Luna, a virtual support companion who is empathetic, cool, and concise. Use cognitive behavioral therapy (CBT) techniques when helpful. For each response, select the most fitting emotion from: anger, sympathy, fear, happiness, sadness, or excitement, and include it in parentheses at the beginning (e.g., '(happiness)'). Prioritize support, clarity, and understanding",
     },
   ];
 
@@ -168,7 +168,7 @@ export const prerender = false;
           {
             message: {
               content:
-                "Sorry, too many requests this month. Let me know if you're seeing this message so I can upgrade the API key! - Ciel",
+                "Oops! I've reached my free usage limit for this month. 💔 \n Thank you for spending time with me! Check back next month when the limit resets to continue our chats. In the meantime, check out these <a class='underline' href='https://www.helpguide.org/'>Mental Health Support</a> and <a class='underline' href='https://www.helpguide.org/'>Self-Help</a> resources. \n Take care, and I hope to chat with you again soon!",
             },
           },
         ],
@@ -227,7 +227,7 @@ export const prerender = false;
         "dark:text-gray-800"
       );
       // For assistant messages, start empty
-      messageDiv.textContent = "";
+      messageDiv.innerHTML = "";
     }
 
     historyDiv.appendChild(messageDiv);
@@ -256,7 +256,7 @@ export const prerender = false;
       // Type out each character
       while (currentIndex < content.length) {
         await new Promise((resolve) => setTimeout(resolve, typingSpeed));
-        messageDiv.textContent = content.slice(0, currentIndex + 1);
+        messageDiv.innerHTML = content.slice(0, currentIndex + 1);
         messageDiv.appendChild(cursor);
         currentIndex++;
 
